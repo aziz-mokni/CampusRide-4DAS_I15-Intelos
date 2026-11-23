@@ -1,0 +1,6 @@
+package com.campusride.notification.domain.enums;
+
+public enum NotificationType {
+    USER_REGISTERED, BOOKING_CONFIRMED, BOOKING_REJECTED, BOOKING_CANCELLED,
+    PAYMENT_COMPLETED, PAYMENT_FAILED, TRIP_CANCELLED, REVIEW_PUBLISHED
+}
