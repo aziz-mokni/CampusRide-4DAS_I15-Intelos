@@ -12,12 +12,15 @@ public class Conversation {
     @Builder.Default private List<Message> messages = new ArrayList<>();
 
     public boolean isParticipant(String userId) {
-        return participantIds.contains(userId);
+        return userId != null && participantIds.contains(userId);
     }
 
     public Message addMessage(String senderId, String text) {
         if (!isParticipant(senderId)) {
             throw new IllegalStateException("Sender is not a participant of this conversation");
+        }
+        if (text == null || text.isBlank()) {
+            throw new IllegalArgumentException("Message text must not be blank");
         }
         Message message = Message.builder()
                 .id(UUID.randomUUID().toString())
