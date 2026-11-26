@@ -1,0 +1,19 @@
+DISCOVERY-SERVER (Eureka) - CampusRide
+
+PREREQUIS : JDK 17 installe (java -version)
+
+OUVRIR DANS INTELLIJ
+1. Fermer le projet actuel : File > Close Project
+2. File > Open...
+3. Selectionner le fichier  discovery-server\pom.xml  (pas le dossier parent)
+4. Choisir "Open as Project" puis "Trust Project"
+5. Attendre la fin du chargement Maven (barre en bas a droite)
+6. File > Project Structure > Project : SDK = 17
+7. Ouvrir DiscoveryServerApplication et cliquer sur le triangle vert
+
+LANCER AU TERMINAL
+cd C:\Users\LENOVO\Desktop\campusRide\backend\discovery-server
+dir pom.xml
+mvn spring-boot:run
+
+VERIFIER : http://localhost:8761
