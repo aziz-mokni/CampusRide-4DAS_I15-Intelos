@@ -15,9 +15,13 @@ public class VehicleService implements ManageVehicleUseCase {
         this.users = users;
     }
 
+    private User load(String userId) {
+        return users.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+    }
+
     @Override
     public Vehicle addVehicle(String userId, AddVehicleCommand c) {
-        User user = users.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        User user = load(userId);
         if (!user.isActive()) {
             throw new UserBlockedException(userId);
         }
@@ -33,8 +37,34 @@ public class VehicleService implements ManageVehicleUseCase {
 
     @Override
     public List<Vehicle> listVehicles(String userId) {
-        return users.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId))
-                .getVehicles();
+        return load(userId).getVehicles();
+    }
+
+    @Override
+    public Vehicle updateVehicle(String userId, String vehicleId, UpdateVehicleCommand c) {
+        User user = load(userId);
+        if (!user.isActive()) {
+            throw new UserBlockedException(userId);
+        }
+        if (user.findVehicle(vehicleId).isEmpty()) {
+            throw new VehicleNotFoundException(vehicleId);
+        }
+        if (users.existsByPlateNumberExcludingVehicle(c.plateNumber(), vehicleId)) {
+            throw new PlateNumberAlreadyUsedException(c.plateNumber());
+        }
+        Vehicle updated = new Vehicle(vehicleId, c.brand(), c.model(), c.color(),
+                c.plateNumber(), c.seats());
+        user.replaceVehicle(updated);
+        users.save(user);
+        return updated;
+    }
+
+    @Override
+    public void removeVehicle(String userId, String vehicleId) {
+        User user = load(userId);
+        if (!user.removeVehicle(vehicleId)) {
+            throw new VehicleNotFoundException(vehicleId);
+        }
+        users.save(user);
     }
 }

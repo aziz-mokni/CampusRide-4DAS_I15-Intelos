@@ -6,4 +6,6 @@ import java.util.List;
 public interface ManageVehicleUseCase {
     Vehicle addVehicle(String userId, AddVehicleCommand command);
     List<Vehicle> listVehicles(String userId);
+    Vehicle updateVehicle(String userId, String vehicleId, UpdateVehicleCommand command);
+    void removeVehicle(String userId, String vehicleId);
 }

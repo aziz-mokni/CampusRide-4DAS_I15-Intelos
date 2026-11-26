@@ -25,6 +25,7 @@ public class SecurityConfig {
                 .requestMatchers("/actuator/health", "/v3/api-docs/**",
                         "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/users/*/status").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/v1/users").hasRole("ADMIN")
                 .anyRequest().authenticated())
             .oauth2ResourceServer(o -> o.jwt(j -> j.jwtAuthenticationConverter(converter())));
         return http.build();

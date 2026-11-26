@@ -22,6 +22,11 @@ public class GlobalExceptionHandler {
         return problem(HttpStatus.NOT_FOUND, "user-not-found", e.getMessage(), req);
     }
 
+    @ExceptionHandler(VehicleNotFoundException.class)
+    public ProblemDetail vehicleNotFound(VehicleNotFoundException e, HttpServletRequest req) {
+        return problem(HttpStatus.NOT_FOUND, "vehicle-not-found", e.getMessage(), req);
+    }
+
     @ExceptionHandler(EmailAlreadyUsedException.class)
     public ProblemDetail emailUsed(EmailAlreadyUsedException e, HttpServletRequest req) {
         return problem(HttpStatus.CONFLICT, "email-already-used", e.getMessage(), req);

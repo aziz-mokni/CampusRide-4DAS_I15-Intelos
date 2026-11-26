@@ -42,6 +42,24 @@ public class UserController {
         return ResponseEntity.created(location).body(WebMapper.toResponse(user));
     }
 
+    /** Liste paginée des utilisateurs (administrateur). */
+    @GetMapping
+    public PagedResponse<UserResponse> list(@RequestParam(defaultValue = "0") int page,
+                                            @RequestParam(defaultValue = "20") int size) {
+        if (page < 0 || size < 1 || size > 100) {
+            throw new IllegalArgumentException("page doit être >= 0 et size entre 1 et 100");
+        }
+        List<UserResponse> content = userUseCase.list(page, size).stream()
+                .map(WebMapper::toResponse).toList();
+        return new PagedResponse<>(content, page, size, userUseCase.count());
+    }
+
+    /** Profil de l'utilisateur connecté (identifié par le sujet du JWT). */
+    @GetMapping("/me")
+    public UserResponse me(@AuthenticationPrincipal Jwt jwt) {
+        return WebMapper.toResponse(userUseCase.getByKeycloakId(jwt.getSubject()));
+    }
+
     @GetMapping("/{id}")
     public UserResponse get(@PathVariable String id) {
         return WebMapper.toResponse(userUseCase.getById(id));
@@ -73,6 +91,25 @@ public class UserController {
     @GetMapping("/{id}/vehicles")
     public List<VehicleResponse> vehicles(@PathVariable String id) {
         return vehicleUseCase.listVehicles(id).stream().map(WebMapper::toResponse).toList();
+    }
+
+    @PutMapping("/{id}/vehicles/{vehicleId}")
+    public VehicleResponse updateVehicle(@PathVariable String id,
+                                         @PathVariable String vehicleId,
+                                         @Valid @RequestBody UpdateVehicleRequest r,
+                                         Authentication auth, @AuthenticationPrincipal Jwt jwt) {
+        checkOwnerOrAdmin(id, auth, jwt);
+        return WebMapper.toResponse(vehicleUseCase.updateVehicle(id, vehicleId,
+                new UpdateVehicleCommand(r.brand(), r.model(), r.color(), r.plateNumber(), r.seats())));
+    }
+
+    @DeleteMapping("/{id}/vehicles/{vehicleId}")
+    public ResponseEntity<Void> deleteVehicle(@PathVariable String id,
+                                              @PathVariable String vehicleId,
+                                              Authentication auth, @AuthenticationPrincipal Jwt jwt) {
+        checkOwnerOrAdmin(id, auth, jwt);
+        vehicleUseCase.removeVehicle(id, vehicleId);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/status")

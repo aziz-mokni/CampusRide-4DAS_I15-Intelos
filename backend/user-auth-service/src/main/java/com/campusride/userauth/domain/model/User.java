@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class User {
     private final String id;
@@ -35,6 +36,23 @@ public class User {
     public void activate() { this.status = UserStatus.ACTIVE; }
 
     public void addVehicle(Vehicle vehicle) { vehicles.add(vehicle); }
+
+    public Optional<Vehicle> findVehicle(String vehicleId) {
+        return vehicles.stream().filter(v -> v.getId().equals(vehicleId)).findFirst();
+    }
+
+    public boolean removeVehicle(String vehicleId) {
+        return vehicles.removeIf(v -> v.getId().equals(vehicleId));
+    }
+
+    public void replaceVehicle(Vehicle updated) {
+        for (int i = 0; i < vehicles.size(); i++) {
+            if (vehicles.get(i).getId().equals(updated.getId())) {
+                vehicles.set(i, updated);
+                return;
+            }
+        }
+    }
 
     public String getId() { return id; }
     public String getKeycloakId() { return keycloakId; }
