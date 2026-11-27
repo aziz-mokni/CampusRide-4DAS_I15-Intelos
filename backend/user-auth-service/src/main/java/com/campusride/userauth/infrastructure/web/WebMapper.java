@@ -11,8 +11,8 @@ public final class WebMapper {
 
     public static UserResponse toResponse(User u) {
         Profile p = u.getProfile();
-        return new UserResponse(u.getId(), u.getEmail(), u.getRole(), u.getStatus(),
-                u.getCreatedAt(), u.isDriver(),
+        return new UserResponse(u.getId(), u.getEmail(), p.getFirstName(), p.getLastName(),
+                u.getRole(), u.getStatus(), u.getCreatedAt(), u.isDriver(),
                 new ProfileResponse(p.getFirstName(), p.getLastName(), p.getPhone(),
                         p.getUniversity(), p.getPhotoUrl(), p.getBio()));
     }

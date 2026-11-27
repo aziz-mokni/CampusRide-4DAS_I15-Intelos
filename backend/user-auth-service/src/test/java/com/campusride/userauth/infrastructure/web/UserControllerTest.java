@@ -28,7 +28,7 @@ class UserControllerTest {
 
     private static final String BODY =
             "{\"firstName\":\"Nour\",\"lastName\":\"Nasfi\",\"phone\":\"22111222\","
-            + "\"university\":\"ESPRIT\",\"bio\":\"test\"}";
+                    + "\"university\":\"ESPRIT\",\"bio\":\"test\"}";
 
     @Test
     void createUser_returns201() throws Exception {
@@ -38,6 +38,8 @@ class UserControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
                 .andExpect(jsonPath("$.email").value("nour@esprit.tn"))
+                .andExpect(jsonPath("$.firstName").value("Nour"))
+                .andExpect(jsonPath("$.lastName").value("Nasfi"))
                 .andExpect(jsonPath("$.status").value("ACTIVE"));
     }
 
